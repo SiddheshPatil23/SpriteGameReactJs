@@ -10,14 +10,13 @@ module.exports = merge([
   {
     mode: "production",
     output: {
-      filename: "app.js", // Name of the output file
-      path: path.resolve(__dirname, "dist"), // Directory to write files
+      filename: "app.js", 
+      path: path.resolve(__dirname, "build"), 
     },
     optimization: {
       minimize: true,
       minimizer: [
-        // Uncomment the `...` to extend existing minimizers if needed
-        // `...`,
+      
         new CssMinimizerPlugin(),
       ],
     },
