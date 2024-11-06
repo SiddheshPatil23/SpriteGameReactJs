@@ -1,4 +1,4 @@
-# Scratch starter project
+# Scratch starter project - level 2 - Multiple sprites
 
 To get started:
 
