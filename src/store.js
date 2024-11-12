@@ -10,7 +10,7 @@ const spritesSlice = createSlice({
   reducers: {
     addSprite: (state) => {
       if (state.sprites.length < 2) {
-        state.sprites.push({ id: state.sprites.length + 1, position: { x: 0, y: 0 }, rotation: 0 });
+        state.sprites.push({ id: state.sprites.length + 1, position: { x: 150, y: 0 }, rotation: 0 });
       }
     },
     updateSprite: (state, action) => {

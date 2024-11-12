@@ -1,7 +1,20 @@
 import React, { useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setBoundaries, setSelectedSpriteId } from "../store";
+import { setBoundaries, setSelectedSpriteId, updateSprite } from "../store";
 import CatSprite from "./CatSprite";
+import { useDrop } from "react-dnd";
+
+function mergeRefs(...refs) {
+  return (element) => {
+    refs.forEach((ref) => {
+      if (typeof ref === "function") {
+        ref(element);
+      } else if (ref) {
+        ref.current = element;
+      }
+    });
+  };
+}
 
 export default function PreviewArea() {
   const previewRef = useRef(null);
@@ -26,20 +39,44 @@ export default function PreviewArea() {
     }
   }, [dispatch, previewRef, boundaries]);
 
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept: "SPRITE",
+    drop: (item, monitor) => {
+      const offset = monitor.getSourceClientOffset();
+      if (offset && item.id && previewRef.current) {
+  
+        const containerRect = previewRef.current.getBoundingClientRect();
+
+        const spriteWidth = 50;
+        const spriteHeight = 50;
+
+        const newPosX = Math.max(0, Math.min(boundaries.width - spriteWidth, offset.x - containerRect.left - spriteWidth / 2));
+        const newPosY = Math.max(0, Math.min(boundaries.height - spriteHeight, offset.y - containerRect.top - spriteHeight / 2));
+
+        dispatch(updateSprite({ id: item.id, deltaX: newPosX - item.position.x, deltaY: newPosY - item.position.y }));
+      }
+    },
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+    }),
+  }));
+
   return (
     <div
-      ref={previewRef}
+      ref={mergeRefs(previewRef, drop)}
       className="flex-none h-full overflow-hidden p-2"
       style={{
         position: "relative",
-        width: "500px",
-        height: "500px",
+        width: `${boundaries.width}px`,
+        height: `${boundaries.height}px`,
         border: "1px solid #ccc",
+        backgroundColor: isOver ? "lightgreen" : "white",
       }}
     >
       {sprites.map((sprite) => (
         <CatSprite
           key={sprite.id}
+          id={sprite.id}
           position={sprite.position}
           rotation={sprite.rotation}
           isSelected={sprite.id === selectedSpriteId}

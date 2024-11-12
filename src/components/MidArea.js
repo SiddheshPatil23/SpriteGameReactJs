@@ -44,13 +44,13 @@ export default function MidArea() {
       if (!sprite) continue;
 
       if (type === "move") {
-        const deltaX = 10 * Math.cos((sprite.rotation * Math.PI) / 180);
-        const deltaY = 10 * Math.sin((sprite.rotation * Math.PI) / 180);
+        const deltaX = 50 * Math.cos((sprite.rotation * Math.PI) / 180);
+        const deltaY = 50 * Math.sin((sprite.rotation * Math.PI) / 180);
         dispatch(updateSprite({ id: selectedSpriteId, deltaX, deltaY }));
       } else if (type === "turnLeft") {
-        dispatch(updateSprite({ id: selectedSpriteId, deltaRotation: -15 }));
+        dispatch(updateSprite({ id: selectedSpriteId, deltaRotation: -30 }));
       } else if (type === "turnRight") {
-        dispatch(updateSprite({ id: selectedSpriteId, deltaRotation: 15 }));
+        dispatch(updateSprite({ id: selectedSpriteId, deltaRotation: 30 }));
       }
 
       await new Promise((resolve) => setTimeout(resolve, 500));

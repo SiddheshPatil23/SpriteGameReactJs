@@ -1,17 +1,45 @@
 import React from "react";
+import { useDrag } from "react-dnd";
+import { useDispatch } from "react-redux";
+import { updateSprite } from "../store";
 
-export default function CatSprite({ position, rotation, isSelected, onClick }) {
+export default function CatSprite({ id, position, rotation, isSelected, onClick }) {
+  const dispatch = useDispatch();
+
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: "SPRITE",
+    item: { id },  
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+    end: (item, monitor) => {
+      const delta = monitor.getDifferenceFromInitialOffset();
+      if (delta) {
+        const newX = position.x + delta.x;
+        const newY = position.y + delta.y;
+
+        dispatch(updateSprite({ id: item.id, deltaX: newX - position.x, deltaY: newY - position.y }));
+      }
+    },
+  }), [position]);
+
   return (
     <div
+      ref={drag}
       onClick={onClick}
       style={{
-        transform: `translate(${Math.max(0, Math.min(450, position.x))}px, ${Math.max(0, Math.min(450, position.y))}px) rotate(${rotation}deg)`,
+        transform: `translate(${position.x}px, ${position.y}px) rotate(${rotation}deg)`,
         position: "absolute",
         border: isSelected ? "2px solid red" : "none",
-        cursor: "pointer",
+        cursor: "move",
+        opacity: isDragging ? 0.5 : 1,
+        width: '100px', 
+        height: '110px',
+        transition: isDragging ? 'none' : 'transform 0.5s ease-out',
       }}
     >
-       <svg
+      <svg>
+      <svg
       xmlns="http://www.w3.org/2000/svg"
       width="95.17898101806641"
       height="100.04156036376953"
@@ -189,6 +217,12 @@ export default function CatSprite({ position, rotation, isSelected, onClick }) {
         </g>
       </g>
     </svg>
+      </svg>
     </div>
   );
 }
+
+
+
+
+

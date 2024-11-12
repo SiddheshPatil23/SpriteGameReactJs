@@ -46,15 +46,15 @@ export default function Sidebar() {
     const selectedSprite = sprites.find((sprite) => sprite.id === selectedSpriteId);
     if (selectedSprite) {
       const { rotation } = selectedSprite;
-      const deltaX = 10 * Math.cos((rotation * Math.PI) / 180);
-      const deltaY = 10 * Math.sin((rotation * Math.PI) / 180);
+      const deltaX = 50 * Math.cos((rotation * Math.PI) / 180);
+      const deltaY = 50 * Math.sin((rotation * Math.PI) / 180);
       dispatch(updateSprite({ id: selectedSpriteId, deltaX, deltaY }));
     }
   };
 
   const handleTurnLeft = () => {
     if (selectedSpriteId) {
-      dispatch(updateSprite({ id: selectedSpriteId, deltaRotation: -15 }));
+      dispatch(updateSprite({ id: selectedSpriteId, deltaRotation: -30 }));
     } else {
       console.warn("No sprite selected.");
     }
@@ -62,7 +62,7 @@ export default function Sidebar() {
 
   const handleTurnRight = () => {
     if (selectedSpriteId) {
-      dispatch(updateSprite({ id: selectedSpriteId, deltaRotation: 15 }));
+      dispatch(updateSprite({ id: selectedSpriteId, deltaRotation: 30 }));
     } else {
       console.warn("No sprite selected.");
     }
@@ -84,21 +84,21 @@ export default function Sidebar() {
       <div className="font-bold"> {"Motion"} </div>
       <DraggableAction type="move" spriteId={selectedSpriteId} onClick={handleMove}>
         <div spriteId={selectedSpriteId} onClick={handleMove}className="flex flex-row flex-wrap bg-blue-500 text-white px-2 py-1 my-2 text-sm cursor-pointer">
-          {"Move 10 steps"}
+          {"Move 50 steps"}
         </div>
       </DraggableAction>
       <DraggableAction type="turnLeft" spriteId={selectedSpriteId} onClick={handleTurnLeft}>
         <div onClick={handleTurnLeft} className="flex flex-row flex-wrap bg-blue-500 text-white px-2 py-1 my-2 text-sm cursor-pointer">
           {"Turn "}
           <Icon name="undo" size={15} className="text-white mx-2" />
-          {"15 degrees"}
+          {"30 degrees"}
         </div>
       </DraggableAction>
       <DraggableAction type="turnRight" spriteId={selectedSpriteId} onClick={handleTurnRight}>
         <div onClick={handleTurnRight} className="flex flex-row flex-wrap bg-blue-500 text-white px-2 py-1 my-2 text-sm cursor-pointer">
           {"Turn "}
           <Icon name="redo" size={15} className="text-white mx-2" />
-          {"15 degrees"}
+          {"30 degrees"}
         </div>
       </DraggableAction>
     </div>
