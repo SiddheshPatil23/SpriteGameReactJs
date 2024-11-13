@@ -5,7 +5,9 @@ const spritesSlice = createSlice({
   initialState: {
     sprites: [{ id: 1, position: { x: 0, y: 0 }, rotation: 0 }],
     selectedSpriteId: 1,
-    boundaries: { width: 500, height: 500 }
+    boundaries: { width: 500, height: 500 },
+    moveSteps: 50,      
+    turnDegrees: 30,    
   },
   reducers: {
     addSprite: (state) => {
@@ -23,6 +25,12 @@ const spritesSlice = createSlice({
         sprite.rotation = (sprite.rotation + deltaRotation) % 360;
       }
     },
+    setMoveSteps: (state, action) => {
+      state.moveSteps = action.payload;
+    },
+    setTurnDegrees: (state, action) => {
+      state.turnDegrees = action.payload;
+    },
     setBoundaries: (state, action) => {
       state.boundaries = action.payload;
     },
@@ -37,6 +45,8 @@ const spritesSlice = createSlice({
 export const {
   addSprite,
   updateSprite,
+  setMoveSteps,
+  setTurnDegrees,
   setBoundaries,
   setSelectedSpriteId
 } = spritesSlice.actions;

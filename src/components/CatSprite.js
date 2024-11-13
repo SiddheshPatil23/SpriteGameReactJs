@@ -8,17 +8,14 @@ export default function CatSprite({ id, position, rotation, isSelected, onClick 
 
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "SPRITE",
-    item: { id },  
+    item: { id,position },  
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
     end: (item, monitor) => {
       const delta = monitor.getDifferenceFromInitialOffset();
       if (delta) {
-        const newX = position.x + delta.x;
-        const newY = position.y + delta.y;
-
-        dispatch(updateSprite({ id: item.id, deltaX: newX - position.x, deltaY: newY - position.y }));
+        dispatch(updateSprite({ id: item.id, deltaX: delta.x, deltaY: delta.y }));
       }
     },
   }), [position]);
@@ -33,16 +30,15 @@ export default function CatSprite({ id, position, rotation, isSelected, onClick 
         border: isSelected ? "2px solid red" : "none",
         cursor: "move",
         opacity: isDragging ? 0.5 : 1,
-        width: '100px', 
-        height: '110px',
+        width: '80px', 
+        height: '85px',
         transition: isDragging ? 'none' : 'transform 0.5s ease-out',
       }}
     >
-      <svg>
       <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="95.17898101806641"
-      height="100.04156036376953"
+      width="75.17898101806641"
+      height="80.04156036376953"
       viewBox="0.3210171699523926 0.3000000357627869 95.17898101806641 100.04156036376953"
       version="1.1"
       xmlSpace="preserve"
@@ -217,7 +213,6 @@ export default function CatSprite({ id, position, rotation, isSelected, onClick 
         </g>
       </g>
     </svg>
-      </svg>
     </div>
   );
 }

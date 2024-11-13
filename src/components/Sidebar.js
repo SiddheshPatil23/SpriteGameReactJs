@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useDrag } from "react-dnd";
-import { updateSprite, setSelectedSpriteId } from "../store";
+import { updateSprite, setMoveSteps, setTurnDegrees,selectedSpriteId, setSelectedSpriteId } from "../store";
 import Icon from "./Icon";
+import { calculateDelta } from "../utils";  
 
 const DraggableAction = ({ type, spriteId, children }) => {
   const dispatch = useDispatch();
@@ -36,6 +37,8 @@ export default function Sidebar() {
   const dispatch = useDispatch();
   const selectedSpriteId = useSelector((state) => state.sprites.selectedSpriteId);
   const sprites = useSelector((state) => state.sprites.sprites);
+  const moveSteps = useSelector((state) => state.sprites.moveSteps);      
+  const turnDegrees = useSelector((state) => state.sprites.turnDegrees);  
 
   const handleMove = () => {
     if (!selectedSpriteId) {
@@ -45,16 +48,14 @@ export default function Sidebar() {
 
     const selectedSprite = sprites.find((sprite) => sprite.id === selectedSpriteId);
     if (selectedSprite) {
-      const { rotation } = selectedSprite;
-      const deltaX = 50 * Math.cos((rotation * Math.PI) / 180);
-      const deltaY = 50 * Math.sin((rotation * Math.PI) / 180);
+      const { deltaX, deltaY } = calculateDelta(selectedSprite.rotation, moveSteps); 
       dispatch(updateSprite({ id: selectedSpriteId, deltaX, deltaY }));
     }
   };
 
   const handleTurnLeft = () => {
     if (selectedSpriteId) {
-      dispatch(updateSprite({ id: selectedSpriteId, deltaRotation: -30 }));
+      dispatch(updateSprite({ id: selectedSpriteId, deltaRotation: -turnDegrees })); 
     } else {
       console.warn("No sprite selected.");
     }
@@ -62,10 +63,18 @@ export default function Sidebar() {
 
   const handleTurnRight = () => {
     if (selectedSpriteId) {
-      dispatch(updateSprite({ id: selectedSpriteId, deltaRotation: 30 }));
+      dispatch(updateSprite({ id: selectedSpriteId, deltaRotation: turnDegrees }));
     } else {
       console.warn("No sprite selected.");
     }
+  };
+
+  const handleMoveInputChange = (e) => {
+    dispatch(setMoveSteps(Number(e.target.value)));  
+  };
+
+  const handleTurnInputChange = (e) => {
+    dispatch(setTurnDegrees(Number(e.target.value)));  
   };
 
   return (
@@ -82,25 +91,43 @@ export default function Sidebar() {
       ))}
 
       <div className="font-bold"> {"Motion"} </div>
+
+      <label htmlFor="moveSteps">Move Steps:</label>
+      <input
+        id="moveSteps"
+        type="number"
+        value={moveSteps}
+        onChange={handleMoveInputChange}
+        className="border p-1 mb-2"
+      />
+
       <DraggableAction type="move" spriteId={selectedSpriteId} onClick={handleMove}>
-        <div spriteId={selectedSpriteId} onClick={handleMove}className="flex flex-row flex-wrap bg-blue-500 text-white px-2 py-1 my-2 text-sm cursor-pointer">
-          {"Move 50 steps"}
+        <div onClick={handleMove} className="flex flex-row flex-wrap bg-blue-500 text-white px-2 py-1 my-2 text-sm cursor-pointer">
+          {"Move " + moveSteps + " steps"}
         </div>
       </DraggableAction>
+
+      <label htmlFor="turnDegrees">Turn Degrees:</label>
+      <input
+        id="turnDegrees"
+        type="number"
+        value={turnDegrees}
+        onChange={handleTurnInputChange}
+        className="border p-1 mb-2"
+      />
+
       <DraggableAction type="turnLeft" spriteId={selectedSpriteId} onClick={handleTurnLeft}>
         <div onClick={handleTurnLeft} className="flex flex-row flex-wrap bg-blue-500 text-white px-2 py-1 my-2 text-sm cursor-pointer">
-          {"Turn "}
-          <Icon name="undo" size={15} className="text-white mx-2" />
-          {"30 degrees"}
+          {"Turn Left " + turnDegrees + " degrees"}
         </div>
       </DraggableAction>
+
       <DraggableAction type="turnRight" spriteId={selectedSpriteId} onClick={handleTurnRight}>
         <div onClick={handleTurnRight} className="flex flex-row flex-wrap bg-blue-500 text-white px-2 py-1 my-2 text-sm cursor-pointer">
-          {"Turn "}
-          <Icon name="redo" size={15} className="text-white mx-2" />
-          {"30 degrees"}
+          {"Turn Right " + turnDegrees + " degrees"}
         </div>
       </DraggableAction>
     </div>
   );
 }
+
